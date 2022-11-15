@@ -13,7 +13,7 @@ from .plotter import SlingshotPlotter
 
 
 class Slingshot():
-    def __init__(self, data, cluster_labels, start_node=0, end_nodes=None, debug_level=None):
+    def __init__(self, data, cluster_labels, start_node=0, end_nodes=None, k=3, debug_level=None):
         self.data = data
         self.cluster_labels_onehot = cluster_labels
         self.cluster_labels = self.cluster_labels_onehot.argmax(axis=1)
@@ -29,6 +29,7 @@ class Slingshot():
         self.distances = None
         self.branch_clusters = None
         self._tree = None
+        self.k = k
 
         # Plotting and printing
         debug_level = 0 if debug_level is None else dict(verbose=1)[debug_level]
@@ -189,7 +190,7 @@ class Slingshot():
                 np.array([self.cluster_labels == k for k in lineage]))
             cells_involved = self.data[cell_mask]
 
-            curve = PrincipalCurve(k=3)
+            curve = PrincipalCurve(k=self.k)
             curve.project_to_curve(cells_involved, points=p)
             d_sq, dist = curve.project_to_curve(self.data, points=curve.points_interp[curve.order])
             distances.append(d_sq)
